@@ -464,3 +464,412 @@ h1 {
   .stat-icon { width: 24px; height: 24px; }
   .form-row { grid-template-columns: 1fr; gap: 0; }
 }
+
+:root {
+  color-scheme: light;
+
+  --theme-bg: #f6f7fb;
+  --theme-surface: #ffffff;
+  --theme-text: #24263d;
+  --theme-muted: #8189a3;
+  --theme-border: #e8eaf2;
+  --theme-input: #ffffff;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --theme-bg: #151622;
+  --theme-surface: #202233;
+  --theme-text: #f0f1fa;
+  --theme-muted: #a4aac2;
+  --theme-border: #35384d;
+  --theme-input: #292c40;
+}
+
+html[data-theme="dark"] body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+html[data-theme="dark"] .app-shell,
+html[data-theme="dark"] main,
+html[data-theme="dark"] .main-content {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .task-section,
+html[data-theme="dark"] .task-card,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .task-list,
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .modal-content {
+  background-color: var(--theme-surface);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] p,
+html[data-theme="dark"] label,
+html[data-theme="dark"] .task-title {
+  color: var(--theme-text);
+}
+
+html[data-theme="dark"] .task-description,
+html[data-theme="dark"] .task-meta,
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .app-footer {
+  color: var(--theme-muted);
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+  background-color: var(--theme-input);
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: var(--theme-muted);
+}
+
+html[data-theme="dark"] hr,
+html[data-theme="dark"] .task-meta,
+html[data-theme="dark"] footer {
+  border-color: var(--theme-border);
+}
+
+
+body,
+.sidebar,
+.task-section,
+.task-card,
+.stat-card,
+input,
+textarea,
+select {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+html[data-theme="dark"] .logo,
+html[data-theme="dark"] .brand,
+html[data-theme="dark"] .logo-text,
+html[data-theme="dark"] .local-label {
+  color: var(--theme-text);
+}
+
+html[data-theme="dark"] .sidebar .nav-item:not(.active) {
+  color: var(--theme-muted);
+}
+
+html[data-theme="dark"] .sidebar .nav-item.active {
+  background: #34304f;
+  color: #c7bcff;
+}
+
+html[data-theme="dark"] .sidebar .nav-item.active span {
+  color: inherit;
+}
+
+html[data-theme="dark"] .sidebar > *,
+html[data-theme="dark"] .sidebar aside {
+  border-color: var(--theme-border);
+}
+
+html[data-theme="dark"] .sidebar .sidebar-card,
+html[data-theme="dark"] .sidebar .promo-card {
+  background: #242238;
+  color: var(--theme-text);
+  border-color: var(--theme-border);
+}
+
+html[data-theme="dark"] .sidebar .sidebar-card p,
+html[data-theme="dark"] .sidebar .promo-card p {
+  color: var(--theme-muted);
+}
+
+html[data-theme="dark"] .theme-toggle {
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] select:focus {
+  outline: 2px solid #8b7cf6;
+  outline-offset: 1px;
+}
+
+html[data-theme="dark"] .sidebar .sidebar-card,
+html[data-theme="dark"] .sidebar .promo-card,
+html[data-theme="dark"] .sidebar .sidebar-promo {
+  background: #242238;
+  color: #f0f1fa;
+  border: 1px solid #35384d;
+}
+
+html[data-theme="dark"] .sidebar .sidebar-card *,
+html[data-theme="dark"] .sidebar .promo-card *,
+html[data-theme="dark"] .sidebar .sidebar-promo * {
+  color: inherit;
+}
+
+html[data-theme="dark"] .sidebar .sidebar-card p,
+html[data-theme="dark"] .sidebar .promo-card p,
+html[data-theme="dark"] .sidebar .sidebar-promo p {
+  color: #a4aac2;
+}
+
+
+body {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+h1 {
+  font-size: clamp(28px, 2.4vw, 36px);
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 21px;
+  line-height: 1.35;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.task-description,
+.list-description,
+.stat-label,
+.stat-description,
+.local-label,
+.breadcrumb,
+.app-footer,
+footer {
+  font-size: 13px;
+}
+
+.task-meta,
+.priority,
+.due-badge {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nav-item,
+button,
+input,
+select,
+textarea {
+  font-size: 14px;
+}
+
+html[data-theme="light"] {
+  --theme-muted: #5f667d;
+}
+
+html[data-theme="dark"] {
+  --theme-muted: #c0c5d8;
+}
+
+html[data-theme="dark"] .task-description,
+html[data-theme="dark"] .list-description,
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .stat-description,
+html[data-theme="dark"] .local-label,
+html[data-theme="dark"] .breadcrumb,
+html[data-theme="dark"] .app-footer,
+html[data-theme="dark"] footer {
+  color: #c0c5d8;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #8170f8;
+  outline-offset: 2px;
+}
+
+
+html:not([data-theme="dark"]) body {
+  color: #20243a;
+}
+
+html:not([data-theme="dark"]) .task-description,
+html:not([data-theme="dark"]) .list-description,
+html:not([data-theme="dark"]) .stat-label,
+html:not([data-theme="dark"]) .stat-description,
+html:not([data-theme="dark"]) .local-label,
+html:not([data-theme="dark"]) .breadcrumb,
+html:not([data-theme="dark"]) .app-footer,
+html:not([data-theme="dark"]) footer {
+  color: #5b6278 !important;
+}
+
+html[data-theme="dark"] body {
+  color: #f5f6ff;
+}
+
+html[data-theme="dark"] .task-description,
+html[data-theme="dark"] .list-description,
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .stat-description,
+html[data-theme="dark"] .local-label,
+html[data-theme="dark"] .breadcrumb,
+html[data-theme="dark"] .app-footer,
+html[data-theme="dark"] footer {
+  color: #cbd0e3 !important;
+}
+
+html:not([data-theme="dark"]) .sidebar .nav-item,
+html:not([data-theme="dark"]) .sidebar .sidebar-footer,
+html:not([data-theme="dark"]) .sidebar .workspace-label {
+  color: #535b73;
+}
+
+html[data-theme="dark"] .sidebar .nav-item,
+html[data-theme="dark"] .sidebar .sidebar-footer,
+html[data-theme="dark"] .sidebar .workspace-label {
+  color: #cbd0e3;
+}
+
+.task-meta,
+.priority,
+.due-badge {
+  font-size: 13px;
+}
+
+.stat-label,
+.stat-description,
+.local-label,
+.breadcrumb {
+  font-size: 14px;
+}
+
+.task-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.25s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(35, 38, 65, 0.09);
+}
+
+html[data-theme="dark"] .task-card:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-card,
+  .task-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+@keyframes taskCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-card {
+  animation: taskCardEnter 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-card {
+    animation: none;
+  }
+}
+
+.stat-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(35, 38, 65, 0.08);
+}
+
+html[data-theme="dark"] .stat-card:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .stat-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+html {
+  transition: background-color 0.25s ease;
+}
+
+body,
+.sidebar,
+.topbar,
+.task-section,
+.task-card,
+.stat-card,
+button,
+input,
+select,
+textarea {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  .sidebar,
+  .topbar,
+  .task-section,
+  .task-card,
+  .stat-card,
+  button,
+  input,
+  select,
+  textarea {
+    transition: none;
+  }
+}

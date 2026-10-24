@@ -481,5 +481,30 @@ $("#todayLabel").textContent = new Date().toLocaleDateString(undefined, {
   month: "long",
   day: "numeric"
 }).toUpperCase();
+// ===== Light and Dark Mode =====
 
+const themeToggle = document.querySelector("#themeToggle");
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+
+  const isDark = theme === "dark";
+
+  themeToggle.textContent = isDark ? "☀️ Light mode" : "🌙 Dark mode";
+  themeToggle.setAttribute(
+    "aria-label",
+    isDark ? "Switch to light mode" : "Switch to dark mode"
+  );
+}
+
+const savedTheme = localStorage.getItem("taskflow-theme") || "light";
+applyTheme(savedTheme);
+
+themeToggle.addEventListener("click", () => {
+  const currentTheme = document.documentElement.dataset.theme;
+  const nextTheme = currentTheme === "dark" ? "light" : "dark";
+
+  applyTheme(nextTheme);
+  localStorage.setItem("taskflow-theme", nextTheme);
+});
 fetchTasksFromAPI();
