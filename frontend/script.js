@@ -1,4 +1,4 @@
-
+const API_BASE_URL = "https://3xv0xuv0ze.execute-api.ap-south-1.amazonaws.com";
 const STORAGE_KEY = "taskflow-student-tasks-v1";
 
 const $ = (selector) => document.querySelector(selector);
@@ -12,6 +12,33 @@ const toast = $("#toast");
 let activeFilter = "all";
 let searchQuery = "";
 let tasks = loadTasks();
+async function fetchTasksFromAPI() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/tasks`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+
+    const data = await response.json();
+
+    tasks = (data.tasks || []).map((task) => ({
+      id: task.taskID,
+      title: task.title,
+      description: task.description || "",
+      priority: (task.priority || "medium").charAt(0).toUpperCase()
+        + (task.priority || "medium").slice(1),
+      dueDate: task.dueDate || "",
+      completed: Boolean(task.completed),
+      createdAt: Number(task.createdAt) || Date.now()
+    }));
+
+    render();
+  } catch (error) {
+    console.error("AWS task loading error:", error);
+    showToast("Could not load tasks from AWS. Check your connection.");
+  }
+}
 let toastTimeout;
 
 function loadTasks() {
@@ -284,7 +311,7 @@ function openEditDialog(id) {
   $("#taskTitle").focus();
 }
 
-function handleSave(event) {
+async function handleSave(event) {
   event.preventDefault();
 
   if (!taskForm.reportValidity()) return;
@@ -293,13 +320,11 @@ function handleSave(event) {
   const existing = tasks.find((task) => task.id === id);
 
   const taskData = {
-    id: id || crypto.randomUUID(),
     title: $("#taskTitle").value.trim(),
     description: $("#taskDescription").value.trim(),
-    priority: $("#taskPriority").value,
+    priority: $("#taskPriority").value.toLowerCase(),
     dueDate: $("#taskDueDate").value,
-    completed: existing ? existing.completed : false,
-    createdAt: existing ? existing.createdAt : Date.now()
+    completed: existing ? existing.completed : false
   };
 
   if (!taskData.title) {
@@ -307,56 +332,128 @@ function handleSave(event) {
     return;
   }
 
-  const previousTasks = tasks;
+  try {
+    const url = existing
+      ? `${API_BASE_URL}/tasks/${encodeURIComponent(id)}`
+      : `${API_BASE_URL}/tasks`;
 
-  tasks = existing
-    ? tasks.map((task) => task.id === id ? taskData : task)
-    : [taskData, ...tasks];
+    const response = await fetch(url, {
+      method: existing ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(taskData)
+    });
 
-  if (!saveTasks()) {
-    tasks = previousTasks;
-    return;
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const savedTask = data.task;
+
+    const updatedTask = {
+      id: savedTask.taskID || savedTask.id || id,
+      title: savedTask.title,
+      description: savedTask.description || "",
+      priority: (savedTask.priority || "medium").charAt(0).toUpperCase()
+        + (savedTask.priority || "medium").slice(1),
+      dueDate: savedTask.dueDate || "",
+      completed: Boolean(savedTask.completed),
+      createdAt: Number(savedTask.createdAt) || Date.now()
+    };
+
+    tasks = existing
+      ? tasks.map((task) => task.id === id ? updatedTask : task)
+      : [updatedTask, ...tasks];
+
+    taskDialog.close();
+    render();
+    showToast(existing ? "Task updated successfully." : "Task created successfully.");
+  } catch (error) {
+    console.error("AWS save error:", error);
+    showToast("Could not save task to AWS. Please try again.");
   }
-
-  taskDialog.close();
-  render();
-  showToast(existing ? "Task updated successfully." : "Task created successfully.");
 }
 
-function toggleTask(id) {
+async function toggleTask(id) {
   const task = tasks.find((item) => item.id === id);
   if (!task) return;
 
-  const previousTasks = tasks;
-  tasks = tasks.map((item) =>
-    item.id === id ? { ...item, completed: !item.completed } : item
-  );
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/tasks/${encodeURIComponent(id)}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: task.title,
+          description: task.description || "",
+          priority: (task.priority || "Medium").toLowerCase(),
+          dueDate: task.dueDate || "",
+          completed: !task.completed
+        })
+      }
+    );
 
-  if (!saveTasks()) {
-    tasks = previousTasks;
-    return;
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const savedTask = data.task;
+
+    tasks = tasks.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            completed: Boolean(savedTask.completed)
+          }
+        : item
+    );
+
+    render();
+    showToast(
+      savedTask.completed
+        ? "Great job! Task completed."
+        : "Task marked as pending."
+    );
+  } catch (error) {
+    console.error("AWS completion update error:", error);
+    showToast("Could not update task in AWS. Please try again.");
   }
-
-  render();
-  showToast(task.completed ? "Task marked as pending." : "Great job! Task completed.");
 }
 
-function deleteTask(id) {
+async function deleteTask(id) {
   const task = tasks.find((item) => item.id === id);
   if (!task) return;
 
-  if (!window.confirm(`Delete "${task.title}"? This cannot be undone.`)) return;
-
-  const previousTasks = tasks;
-  tasks = tasks.filter((item) => item.id !== id);
-
-  if (!saveTasks()) {
-    tasks = previousTasks;
+  if (!window.confirm(`Delete "${task.title}"? This cannot be undone.`)) {
     return;
   }
 
-  render();
-  showToast("Task deleted.");
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/tasks/${encodeURIComponent(id)}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    tasks = tasks.filter((item) => item.id !== id);
+
+    render();
+    showToast("Task deleted successfully.");
+  } catch (error) {
+    console.error("AWS delete error:", error);
+    showToast("Could not delete task from AWS. Please try again.");
+  }
 }
 
 document.querySelectorAll("[data-filter]").forEach((button) => {
@@ -401,4 +498,4 @@ $("#todayLabel").textContent = new Date().toLocaleDateString(undefined, {
   day: "numeric"
 }).toUpperCase();
 
-render();
+fetchTasksFromAPI();
