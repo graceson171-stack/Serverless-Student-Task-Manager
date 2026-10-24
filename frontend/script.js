@@ -11,7 +11,7 @@ const toast = $("#toast");
 
 let activeFilter = "all";
 let searchQuery = "";
-let tasks = loadTasks();
+let tasks = [];
 async function fetchTasksFromAPI() {
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`);
@@ -41,15 +41,7 @@ async function fetchTasksFromAPI() {
 }
 let toastTimeout;
 
-function loadTasks() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : [];
-    return Array.isArray(parsed) ? parsed.filter(isValidTask) : [];
-  } catch {
-    return [];
-  }
-}
+
 
 function isValidTask(task) {
   return task &&
@@ -58,15 +50,7 @@ function isValidTask(task) {
     typeof task.completed === "boolean";
 }
 
-function saveTasks() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    return true;
-  } catch {
-    showToast("Could not save data in this browser.");
-    return false;
-  }
-}
+
 
 function escapeHTML(value = "") {
   return String(value).replace(/[&<>"']/g, (character) => ({
